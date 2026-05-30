@@ -70,17 +70,17 @@
   button.reset:hover { color: var(--ink); border-color: var(--muted); background: var(--panel-2); }
 
   .scroll {
-    overflow-x: auto; border: 1px solid var(--border); border-radius: 14px;
-    background: var(--panel); box-shadow: var(--shadow);
+    border: 1px solid var(--border); border-radius: 14px;
+    background: var(--panel); box-shadow: var(--shadow); overflow: hidden;
   }
-  table { border-collapse: collapse; width: 100%; min-width: 1040px; }
+  table { border-collapse: collapse; width: 100%; table-layout: fixed; }
   thead th {
     text-align: left; font-size: 10.5px; font-weight: 600;
     text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted-2);
-    padding: 16px 18px; border-bottom: 1px solid var(--border); white-space: nowrap;
+    padding: 15px 16px; border-bottom: 1px solid var(--border); white-space: nowrap;
     background: var(--panel);
   }
-  tbody td { padding: 16px 18px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tbody td { padding: 15px 16px; border-bottom: 1px solid var(--border); vertical-align: top; }
   tbody tr:last-child td { border-bottom: none; }
   tbody tr { transition: background .12s ease; }
   tbody tr:hover { background: var(--row-hover); }
@@ -90,6 +90,8 @@
 
   .rank { color: var(--muted-2); font-variant-numeric: tabular-nums; font-size: 13px; }
   .name { font-weight: 600; color: var(--ink); font-size: 14px; }
+  td.name, td.small { word-break: break-word; overflow-wrap: anywhere; }
+  td.small .eq { display: block; color: var(--muted-2); font-size: 11.5px; margin-top: 3px; }
   .score {
     font-variant-numeric: tabular-nums; font-weight: 600; font-size: 13px;
     color: var(--ink); letter-spacing: -0.01em;
@@ -131,9 +133,35 @@
   footer { color: var(--muted-2); font-size: 11.5px; margin-top: 28px; line-height: 1.7; }
   footer b { color: var(--muted); font-weight: 500; }
 
-  @media (max-width: 760px) {
-    body { padding: 40px 20px 80px; }
-    h1 { font-size: 24px; }
+  @media (max-width: 820px) {
+    body { padding: 36px 16px 72px; }
+    h1 { font-size: 23px; }
+    header { margin-bottom: 32px; }
+    .scroll { border: none; background: transparent; box-shadow: none; border-radius: 0; }
+    table, thead, tbody, tr, td { display: block; width: 100%; }
+    colgroup { display: none; }
+    thead { position: absolute; left: -9999px; }           /* hide header row; use labels */
+    tbody tr {
+      background: var(--panel); border: 1px solid var(--border);
+      border-radius: 14px; box-shadow: var(--shadow);
+      padding: 16px 18px 6px; margin-bottom: 14px; position: relative;
+    }
+    tbody tr:hover, tbody tr.st1, tbody tr.st2 { background: var(--panel); }
+    tbody tr td { border: none !important; padding: 5px 0; display: flex; gap: 12px; align-items: baseline; }
+    tbody td::before {
+      content: attr(data-label); flex: none; width: 96px;
+      font-size: 10px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.06em; color: var(--muted-2); padding-top: 1px;
+    }
+    /* status + rank pinned top-right / top-left of card */
+    tbody td.center { position: absolute; top: 14px; right: 16px; padding: 0; }
+    tbody td.center::before { display: none; }
+    tbody td.rank { font-size: 11px; }
+    tbody td.name { padding-right: 40px; }
+    tbody td.name .nm { font-size: 15px; }
+    .score .track { width: 60px; }
+    td.small .eq { display: inline; margin: 0; }
+    td.small .eq::before { content: " · "; }
   }
 </style>
 </head>
@@ -159,6 +187,17 @@
 
   <div class="scroll">
     <table>
+      <colgroup>
+        <col style="width:52px">
+        <col style="width:34px">
+        <col style="width:17%">
+        <col style="width:44px">
+        <col style="width:21%">
+        <col style="width:15%">
+        <col style="width:13%">
+        <col style="width:15%">
+        <col style="width:13%">
+      </colgroup>
       <thead>
         <tr>
           <th class="center">Status</th>
@@ -166,7 +205,6 @@
           <th>Accelerator</th>
           <th>Score</th>
           <th>Investment &amp; terms</th>
-          <th>Equity</th>
           <th>AI / SaaS fit</th>
           <th>Signal</th>
           <th>SMB distribution</th>
@@ -185,24 +223,40 @@
 
 <script>
 const DATA = [
-  {r:1,  n:"Entrepreneur First (London)",       u:"https://www.joinef.com/", s:87, inv:"$125K/8% (+opt. $125K MFN) +£6K stipend", eq:"8%",    ai:"Strong, AI-skewed",        sig:"Top-tier UK",             dist:"Talent, not commercial",             t:"Fall deadline ~Jun 21", ts:"soon"},
-  {r:2,  n:"Seedcamp (London)",                 u:"https://seedcamp.com/", s:85, inv:"Up to ~€475K (flexible)", eq:"7–10%", ai:"Strong EU B2B SaaS",       sig:"Very high (\"EU YC\")",   dist:"Investor network",                   t:"Rolling, ~2wk decisions", ts:"open"},
-  {r:3,  n:"Techstars London",                  u:"https://www.techstars.com/accelerators/london", s:83, inv:"$20K/5% + $200K uncapped SAFE = $220K", eq:"5%+",  ai:"Strong generalist",        sig:"Top-tier, <0.5%",         dist:"10K+ mentor net",                    t:"Fall deadline ~Jun 10", ts:"soon"},
-  {r:4,  n:"Wayra UK (Telefónica/O2)",          u:"https://wayra.uk/", s:82, inv:"Up to ~£250K (€50K–5M range)", eq:"minority", ai:"Good, wants GenAI B2B",    sig:"Strategic corp VC",       dist:"Best telco/SMB reach (O2 business)", t:"Rolling — Outliers 2026 open", ts:"open"},
-  {r:5,  n:"South Park Commons",                u:"https://www.southparkcommons.com/", s:81, inv:"$400K + $600K follow = $1M", eq:"7%",    ai:"Strong, AI-weighted",      sig:"High prestige",           dist:"Network only",                       t:"Fall apps open this summer", ts:"soon"},
-  {r:6,  n:"Neo (Residency)",                   u:"https://neo.com/", s:80, inv:"$750K uncapped SAFE", eq:"val-linked", ai:"Good, AI lean",            sig:"High, ~12–15/cohort",     dist:"Low",                                t:"Deadline Jun 14", ts:"soon"},
-  {r:7,  n:"Antler (London/global)",            u:"https://www.antler.co/apply", s:78, inv:"London £210K (£125K/8.5% + £85K note + £40K fee)", eq:"8.5%", ai:"Strong generalist",  sig:"High, <1%",               dist:"Global investor net",                t:"Rolling (team/idea-stage)", ts:"open"},
-  {r:8,  n:"Founders Factory (London)",         u:"https://foundersfactory.com/", s:74, inv:"~£30–250K cash + ~£220K in-kind", eq:"4–7%",  ai:"Strong, AI tracks",        sig:"High",                    dist:"Corporate partners (enterprise)",    t:"Track-dependent — confirm", ts:"soon"},
-  {r:9,  n:"500 Global (Batch 37)",             u:"https://500.co/", s:72, inv:"$150K (−$37.5K fee ≈ $112.5K net)", eq:"6%",    ai:"Generalist B2B",           sig:"Established, larger cohort", dist:"GTM/distribution curriculum",      t:"Rolling, open now", ts:"open"},
-  {r:10, n:"Plug and Play",                     u:"https://www.plugandplaytechcenter.com/", s:70, inv:"Equity-free program; opt. $25–500K", eq:"0–5%",  ai:"Strong, Applied AI",       sig:"Large net, less selective", dist:"Corporate/commerce pilots",        t:"Rolling / continuous", ts:"open"},
-  {r:11, n:"Station F — F·ai (Paris)",          u:"https://stationf.co/", s:69, inv:"$1M+ compute (OpenAI/Anthropic/Google/Meta/Mistral)", eq:"0%", ai:"Very high, AI-only",  sig:"High prestige",           dist:"Deal Day buyers",                    t:"Fall (~Sep 6) referral-only", ts:"ref"},
-  {r:12, n:"The Residency",                     u:"https://www.livetheresidency.com/", s:58, inv:"Co-living house, ~$3K/trimester stipend", eq:"2% (0% Vienna)", ai:"Good, AI-friendly", sig:"Trendy, ~3%",             dist:"Investor access",                    t:"Effectively rolling (Ch. 8)", ts:"open"},
-  {r:13, n:"Barclays Eagle Labs",               u:"https://labs.uk.barclays/", s:57, inv:"Free", eq:"0%",    ai:"Sector-agnostic",          sig:"UK ecosystem",            dist:"UK SMB banking adjacency",           t:"Female Founder track May 1–Jun 12", ts:"soon"},
-  {r:14, n:"Microsoft for Startups Founders Hub", u:"https://foundershub.startups.microsoft.com/", s:56, inv:"Up to $150K Azure + $2.5K OpenAI", eq:"0%", ai:"High (Azure OpenAI)",      sig:"Low signal, high value",  dist:"None",                               t:"Always-open, bootstrap-friendly", ts:"open"},
-  {r:15, n:"Google for Startups — AI tier",     u:"https://startup.google.com/", s:55, inv:"Up to $350K GCP credits (Gemini)", eq:"0%",    ai:"High (req. Gemini)",       sig:"Low signal, high value",  dist:"None",                               t:"Rolling (needs Seed–A funding)", ts:"open"},
-  {r:16, n:"Tech Nation — Upscale",             u:"https://technation.io/", s:52, inv:"Equity-free growth program", eq:"0%",    ai:"Good digital/SaaS",        sig:"Strong UK brand",         dist:"Network",                            t:"Opens Jun 5 (Series A only)", ts:"soon"},
-  {r:17, n:"NVIDIA Inception",                  u:"https://www.nvidia.com/en-us/startups/", s:48, inv:"Brokered credits (AWS $100K / GCP $350K / DGX)", eq:"0%", ai:"High (GPU-centric)",   sig:"Low (22K+ members)",      dist:"VC intros",                          t:"Always-open", ts:"open"},
-  {r:18, n:"SETsquared",                        u:"https://www.setsquared.co.uk/", s:44, inv:"No equity, no cash", eq:"0%",    ai:"Deep-tech bias, SaaS ok",  sig:"Regional",                dist:"Investor net",                       t:"Rolling", ts:"open"},
+  {r:1,  n:"Y Combinator (late apps)",          u:"https://www.ycombinator.com/apply", s:90, inv:"$125K/7% + $375K uncapped MFN = $500K", eq:"7%", ai:"Elite AI/SaaS focus", sig:"Best in world",          dist:"Demo Day + unmatched alumni",        t:"Late apps for Summer 2026", ts:"open"},
+  {r:2,  n:"Entrepreneur First (London)",       u:"https://www.joinef.com/", s:87, inv:"$125K (+opt. $125K MFN) +£6K stipend", eq:"8%",    ai:"Strong, AI-skewed",        sig:"Top-tier UK",             dist:"Talent, not commercial",             t:"Fall deadline ~Jun 21", ts:"soon"},
+  {r:3,  n:"Seedcamp (London)",                 u:"https://seedcamp.com/", s:85, inv:"Up to ~€475K (flexible)", eq:"7–10%", ai:"Strong EU B2B SaaS",       sig:"Very high (\"EU YC\")",   dist:"Investor network",                   t:"Rolling, ~2wk decisions", ts:"open"},
+  {r:4,  n:"Techstars London",                  u:"https://www.techstars.com/accelerators/london", s:83, inv:"$20K + $200K uncapped SAFE = $220K", eq:"5%+",  ai:"Strong generalist",        sig:"Top-tier, <0.5%",         dist:"10K+ mentor net",                    t:"Fall deadline ~Jun 10", ts:"soon"},
+  {r:5,  n:"Wayra UK (Telefónica/O2)",          u:"https://wayra.uk/", s:82, inv:"Up to ~£250K (€50K–5M range)", eq:"minority", ai:"Good, wants GenAI B2B",    sig:"Strategic corp VC",       dist:"Best telco/SMB reach (O2 business)", t:"Rolling — Outliers 2026 open", ts:"open"},
+  {r:6,  n:"South Park Commons",                u:"https://www.southparkcommons.com/", s:81, inv:"$400K + $600K follow = $1M", eq:"7%",    ai:"Strong, AI-weighted",      sig:"High prestige",           dist:"Network only",                       t:"Fall apps open this summer", ts:"soon"},
+  {r:7,  n:"Forum Ventures",                    u:"https://www.forumvc.com/accelerator", s:80, inv:"$100K post-money SAFE (B2B SaaS only)", eq:"7.5%", ai:"B2B SaaS-first, ideal", sig:"High for early B2B",     dist:"Enterprise GTM curriculum",          t:"Rolling — needs <$500K raised", ts:"open"},
+  {r:8,  n:"Neo (Residency)",                   u:"https://neo.com/", s:80, inv:"$750K uncapped SAFE", eq:"val-linked", ai:"Good, AI lean",            sig:"High, ~12–15/cohort",     dist:"Low",                                t:"Deadline Jun 14", ts:"soon"},
+  {r:9,  n:"Antler (London/global)",            u:"https://www.antler.co/apply", s:78, inv:"London £210K (£125K + £85K note + £40K fee)", eq:"8.5%", ai:"Strong generalist",  sig:"High, <1%",               dist:"Global investor net",                t:"Rolling (team/idea-stage)", ts:"open"},
+  {r:10, n:"a16z Speedrun",                     u:"https://a16z.com/speedrun/", s:78, inv:"$1M (typical, up to $5M)", eq:"~10%",  ai:"Elite AI/games/consumer",  sig:"Tier-1 fund brand",       dist:"a16z network",                       t:"SR005 — check next intake", ts:"closed"},
+  {r:11, n:"EF The Bridge (SF)",                u:"https://www.join-thebridge.com/", s:76, inv:"$250K ($125K/8% +opt $125K MFN) +~$600K credits", eq:"8%", ai:"Strong, AI-skewed", sig:"Highest (EF×SF)",        dist:"SF investor network",                t:"Deadline JUN 1 2026", ts:"soon"},
+  {r:12, n:"Founders Factory (London)",         u:"https://foundersfactory.com/", s:74, inv:"~£30–250K cash + ~£220K in-kind", eq:"4–7%",  ai:"Strong, AI tracks",        sig:"High",                    dist:"Corporate partners (enterprise)",    t:"Track-dependent — confirm", ts:"soon"},
+  {r:13, n:"Village Global — Velocity",         u:"https://www.villageglobal.vc/", s:73, inv:"Up to $1M + AI credits", eq:"flexible", ai:"AI-forward generalist",  sig:"High (LP network)",       dist:"Network intros",                     t:"Rolling", ts:"open"},
+  {r:14, n:"500 Global (Batch 37)",             u:"https://500.co/", s:72, inv:"$150K (−$37.5K fee ≈ $112.5K net)", eq:"6%",    ai:"Generalist B2B",           sig:"Established, larger cohort", dist:"GTM/distribution curriculum",      t:"Rolling, open now", ts:"open"},
+  {r:15, n:"Solo Founders",                     u:"https://www.solofounders.com/", s:71, inv:"~$100K MFN SAFE (solo founders only)", eq:"~2.5%", ai:"AI/SaaS friendly", sig:"Niche, growing",         dist:"SF residency cohort",                t:"Rolling — solo founders only", ts:"open"},
+  {r:16, n:"Plug and Play",                     u:"https://www.plugandplaytechcenter.com/", s:70, inv:"Equity-free program; opt. $25–500K", eq:"0–5%",  ai:"Strong, Applied AI",       sig:"Large net, less selective", dist:"Corporate/commerce pilots",        t:"Rolling / continuous", ts:"open"},
+  {r:17, n:"Z Fellows",                         u:"https://www.zfellows.com/", s:70, inv:"$10K + opt. SAFE at $1B cap (~0%)", eq:"~0%",  ai:"Founder-stage agnostic",   sig:"Trendy, fast",            dist:"Alumni + mentor net",                t:"Rolling, 1-week program", ts:"open"},
+  {r:18, n:"Station F — F·ai (Paris)",          u:"https://stationf.co/", s:69, inv:"$1M+ compute (OpenAI/Anthropic/Google/Meta)", eq:"0%", ai:"Very high, AI-only",  sig:"High prestige",           dist:"Deal Day buyers",                    t:"Fall (~Sep 6) referral-only", ts:"ref"},
+  {r:19, n:"Techstars Anywhere",                u:"https://www.techstars.com/accelerators/anywhere", s:66, inv:"$20K + $200K uncapped SAFE = $220K", eq:"5%+", ai:"Strong generalist",  sig:"Top-tier brand, remote",  dist:"Mentor net (US tz)",                 t:"Deadline ~Jun 10 2026", ts:"soon"},
+  {r:20, n:"f.inc Off Season",                  u:"https://www.f.inc/", s:63, inv:"$100–250K + ~$500K credits", eq:"TBD",  ai:"AI-forward",               sig:"Rising (Founders Inc)",   dist:"SF community",                       t:"Summer 2026 SF (skews young)", ts:"soon"},
+  {r:21, n:"1752 Group",                        u:"https://www.1752.vc/", s:62, inv:"$100K SAFE, $3.5M cap (~2.86%)", eq:"~2.9%", ai:"Generalist",            sig:"Emerging",                dist:"Network",                            t:"Rolling", ts:"open"},
+  {r:22, n:"The Residency",                     u:"https://www.livetheresidency.com/", s:58, inv:"Co-living house, ~$3K/trimester stipend", eq:"2% (0% Vienna)", ai:"Good, AI-friendly", sig:"Trendy, ~3%",             dist:"Investor access",                    t:"Effectively rolling (Ch. 8)", ts:"open"},
+  {r:23, n:"Barclays Eagle Labs",               u:"https://labs.uk.barclays/", s:57, inv:"Free", eq:"0%",    ai:"Sector-agnostic",          sig:"UK ecosystem",            dist:"UK SMB banking adjacency",           t:"Female Founder track May 1–Jun 12", ts:"soon"},
+  {r:24, n:"Microsoft for Startups Founders Hub", u:"https://foundershub.startups.microsoft.com/", s:56, inv:"Up to $150K Azure + $2.5K OpenAI", eq:"0%", ai:"High (Azure OpenAI)",      sig:"Low signal, high value",  dist:"None",                               t:"Always-open, bootstrap-friendly", ts:"open"},
+  {r:25, n:"Google for Startups — AI tier",     u:"https://startup.google.com/", s:55, inv:"Up to $350K GCP credits (Gemini)", eq:"0%",    ai:"High (req. Gemini)",       sig:"Low signal, high value",  dist:"None",                               t:"Rolling (needs Seed–A funding)", ts:"open"},
+  {r:26, n:"Conviction Embed",                  u:"https://embed.conviction.com/", s:54, inv:"Up to $150K", eq:"small", ai:"AI-native — foundation-model lean", sig:"Tier-1 AI fund",     dist:"Conviction net",                     t:"Cohort-based — check intake", ts:"closed", warn:true},
+  {r:27, n:"Bethnal Green Ventures",            u:"https://bethnalgreenventures.com/", s:53, inv:"~£30K", eq:"~7%",  ai:"Tech-for-good lean",       sig:"UK impact niche",         dist:"Impact network",                     t:"Cohort-based — check intake", ts:"closed", warn:true},
+  {r:28, n:"Tech Nation — Upscale",             u:"https://technation.io/", s:52, inv:"Equity-free growth program", eq:"0%",    ai:"Good digital/SaaS",        sig:"Strong UK brand",         dist:"Network",                            t:"Opens Jun 5 (Series A only)", ts:"soon", warn:true},
+  {r:29, n:"Afore Founders in Residence",       u:"https://www.afore.vc/fir", s:50, inv:"$100K+ (pre-idea/ideation)", eq:"varies", ai:"AI-friendly", sig:"Early/niche",            dist:"SF in-person",                       t:"Summer 2026 — stage mismatch", ts:"soon", warn:true},
+  {r:30, n:"NVIDIA Inception",                  u:"https://www.nvidia.com/en-us/startups/", s:48, inv:"Brokered credits (AWS $100K / GCP $350K / DGX)", eq:"0%", ai:"High (GPU-centric)",   sig:"Low (22K+ members)",      dist:"VC intros",                          t:"Always-open", ts:"open", warn:true},
+  {r:31, n:"Heartfelt VC",                      u:"https://www.heartfelt.vc/", s:47, inv:"First-cheque fund (not a program)", eq:"varies", ai:"AI-friendly",        sig:"Emerging fund",           dist:"None (pure capital)",                t:"Rolling — funding, no cohort", ts:"open", warn:true},
+  {r:32, n:"Forma Residency (Bristol)",         u:"https://www.forma.city/", s:45, inv:"$10K grant + accommodation", eq:"0%",  ai:"Generalist",               sig:"Small UK residency",      dist:"Local network",                      t:"Bristol Jul 9–Aug 7 2026", ts:"soon", warn:true},
+  {r:33, n:"StartupYard (CEE)",                 u:"https://startupyard.com/", s:44, inv:"~€25K + ~€45K (unverified)", eq:"~6–8%", ai:"Deep-tech CEE lean",     sig:"Regional (Prague)",       dist:"CEE network",                        t:"Next cohort TBA", ts:"closed", warn:true},
+  {r:34, n:"SETsquared",                        u:"https://www.setsquared.co.uk/", s:42, inv:"No equity, no cash", eq:"0%",    ai:"Deep-tech bias, SaaS ok",  sig:"Regional",                dist:"Investor net",                       t:"Rolling", ts:"open", warn:true},
 ];
 
 // status states: 0 blank · 1 applied · 2 accepted · 3 rejected
@@ -227,15 +281,14 @@ DATA.forEach(d => {
   const warnCls = d.warn ? " warn" : "";
   tr.innerHTML = `
     <td class="center"><button class="cyc" data-id="${id}" data-st="${st}" title="${LABELS[st]}" aria-label="${LABELS[st]}">${ICONS[st] || ""}</button></td>
-    <td class="rank">${d.r}</td>
+    <td class="rank" data-label="Rank">${d.r}</td>
     <td class="name"><a class="acc" href="${d.u}" target="_blank" rel="noopener noreferrer"><span class="nm">${d.n}</span>${EXT}</a></td>
-    <td><span class="score">${d.s}<i class="track"><i style="width:${d.s}%"></i></i></span></td>
-    <td class="small">${d.inv}</td>
-    <td class="small">${d.eq}</td>
-    <td class="small${warnCls}">${d.ai}</td>
-    <td class="small">${d.sig}</td>
-    <td class="small">${d.dist}</td>
-    <td class="status"><i class="dot ${d.ts}"></i><span class="tx">${d.t}</span></td>`;
+    <td data-label="Score"><span class="score">${d.s}<i class="track"><i style="width:${d.s}%"></i></i></span></td>
+    <td class="small" data-label="Investment">${d.inv}<span class="eq">${d.eq} equity</span></td>
+    <td class="small${warnCls}" data-label="AI / SaaS">${d.ai}</td>
+    <td class="small" data-label="Signal">${d.sig}</td>
+    <td class="small" data-label="Distribution">${d.dist}</td>
+    <td class="status" data-label="Timeline"><i class="dot ${d.ts}"></i><span class="tx">${d.t}</span></td>`;
   tbody.appendChild(tr);
 });
 
