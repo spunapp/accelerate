@@ -7,75 +7,138 @@
 <title>Spun — Accelerator Tracker</title>
 <style>
   :root {
-    --bg: #0d0f12;
-    --panel: #15181d;
-    --panel-2: #1b1f26;
-    --border: #2a2f38;
-    --text: #e7ebf0;
-    --muted: #9aa4b2;
-    --accent: #6ee7b7;
-    --accent-dim: #2f6b54;
-    --row-done: #12241c;
+    --bg: #f7f7f5;
+    --panel: #ffffff;
+    --panel-2: #fafafa;
+    --border: #ebe9e4;
+    --border-strong: #e0ddd6;
+    --text: #1a1a18;
+    --muted: #8a877f;
+    --muted-2: #b4b1a8;
+    --ink: #111110;
+    --row-hover: #faf9f7;
+    --row-done: #f4f4f1;
+    --shadow: 0 1px 2px rgba(20,20,18,.04), 0 8px 24px rgba(20,20,18,.04);
   }
   * { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
   body {
     margin: 0;
-    font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font: 14px/1.55 ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
     background: var(--bg);
     color: var(--text);
-    padding: 32px 20px 80px;
+    padding: 88px 56px 120px;
   }
-  .wrap { max-width: 1280px; margin: 0 auto; }
-  h1 { font-size: 26px; margin: 0 0 4px; letter-spacing: -0.02em; }
-  .sub { color: var(--muted); margin: 0 0 4px; }
-  .legend { color: var(--muted); font-size: 13px; margin: 0 0 20px; }
+  .wrap { max-width: 1180px; margin: 0 auto; }
+
+  header { margin-bottom: 48px; }
+  h1 {
+    font-size: 30px; font-weight: 600; margin: 0 0 10px;
+    letter-spacing: -0.025em; color: var(--ink);
+  }
+  .sub { color: var(--muted); margin: 0 0 18px; font-size: 14px; }
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 18px 22px; align-items: center;
+    color: var(--muted); font-size: 12.5px; margin: 0;
+  }
+  .legend .lg { display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
+  .legend .note { color: var(--muted-2); flex-basis: 100%; margin-top: 2px; }
+
+  .dot { width: 8px; height: 8px; border-radius: 999px; display: inline-block; flex: none; }
+  .dot.open   { background: #2f2f2c; }
+  .dot.soon   { background: #6f6d66; }
+  .dot.closed { background: #c7c4bb; }
+  .dot.ref    { background: transparent; border: 1.5px solid #c7c4bb; width: 7px; height: 7px; }
+
   .bar {
-    display: flex; gap: 16px; align-items: center; flex-wrap: wrap;
+    display: flex; gap: 22px; align-items: center; flex-wrap: wrap;
     background: var(--panel); border: 1px solid var(--border);
-    border-radius: 12px; padding: 14px 18px; margin-bottom: 18px;
+    border-radius: 14px; padding: 18px 22px; margin-bottom: 28px;
+    box-shadow: var(--shadow);
   }
   .progress {
-    flex: 1; min-width: 220px; height: 10px; background: var(--panel-2);
-    border-radius: 999px; overflow: hidden; border: 1px solid var(--border);
+    flex: 1; min-width: 240px; height: 6px; background: #efeee9;
+    border-radius: 999px; overflow: hidden;
   }
-  .progress > span { display: block; height: 100%; width: 0; background: var(--accent); transition: width .25s ease; }
-  .count { font-variant-numeric: tabular-nums; color: var(--muted); white-space: nowrap; }
+  .progress > span { display: block; height: 100%; width: 0; background: var(--ink); transition: width .3s cubic-bezier(.4,0,.2,1); border-radius: 999px; }
+  .count { font-variant-numeric: tabular-nums; color: var(--muted); white-space: nowrap; font-size: 13px; }
   button.reset {
-    background: var(--panel-2); color: var(--muted); border: 1px solid var(--border);
-    border-radius: 8px; padding: 7px 12px; cursor: pointer; font-size: 13px;
+    background: transparent; color: var(--muted); border: 1px solid var(--border-strong);
+    border-radius: 9px; padding: 7px 14px; cursor: pointer; font-size: 12.5px;
+    transition: all .15s ease;
   }
-  button.reset:hover { color: var(--text); border-color: var(--muted); }
+  button.reset:hover { color: var(--ink); border-color: var(--muted); background: var(--panel-2); }
 
-  .scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; }
-  table { border-collapse: collapse; width: 100%; min-width: 1100px; }
+  .scroll {
+    overflow-x: auto; border: 1px solid var(--border); border-radius: 14px;
+    background: var(--panel); box-shadow: var(--shadow);
+  }
+  table { border-collapse: collapse; width: 100%; min-width: 1040px; }
   thead th {
-    position: sticky; top: 0; background: var(--panel-2); text-align: left;
-    font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted);
-    padding: 12px 12px; border-bottom: 1px solid var(--border); white-space: nowrap;
+    text-align: left; font-size: 10.5px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted-2);
+    padding: 16px 18px; border-bottom: 1px solid var(--border); white-space: nowrap;
+    background: var(--panel);
   }
-  tbody td { padding: 12px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
-  tbody tr:hover { background: var(--panel); }
+  tbody td { padding: 16px 18px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr { transition: background .12s ease; }
+  tbody tr:hover { background: var(--row-hover); }
   tbody tr.done { background: var(--row-done); }
-  tbody tr.done td.name { text-decoration: line-through; text-decoration-color: var(--accent-dim); color: var(--muted); }
-  .rank { color: var(--muted); font-variant-numeric: tabular-nums; }
-  .name { font-weight: 600; }
+  tbody tr.done td.name { color: var(--muted); }
+  tbody tr.done td.name .nm { text-decoration: line-through; text-decoration-color: var(--muted-2); }
+
+  .rank { color: var(--muted-2); font-variant-numeric: tabular-nums; font-size: 13px; }
+  .name { font-weight: 600; color: var(--ink); font-size: 14px; }
   .score {
-    font-variant-numeric: tabular-nums; font-weight: 700;
-    padding: 2px 8px; border-radius: 6px; display: inline-block; min-width: 34px; text-align: center;
+    font-variant-numeric: tabular-nums; font-weight: 600; font-size: 13px;
+    color: var(--ink); letter-spacing: -0.01em;
   }
-  .small { font-size: 13px; color: var(--muted); }
-  .chk { width: 22px; height: 22px; cursor: pointer; accent-color: var(--accent); }
+  .score .track { display: block; width: 34px; height: 3px; background: #efeee9; border-radius: 999px; margin-top: 5px; overflow: hidden; }
+  .score .track > i { display: block; height: 100%; background: var(--muted); border-radius: 999px; }
+  .small { font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .warn { color: #a8a49a; }
+
+  .chk {
+    appearance: none; -webkit-appearance: none;
+    width: 18px; height: 18px; border: 1.5px solid var(--border-strong);
+    border-radius: 6px; cursor: pointer; position: relative; background: var(--panel);
+    transition: all .15s ease; flex: none; vertical-align: middle;
+  }
+  .chk:hover { border-color: var(--muted); }
+  .chk:checked { background: var(--ink); border-color: var(--ink); }
+  .chk:checked::after {
+    content: ""; position: absolute; left: 5px; top: 1.5px;
+    width: 5px; height: 9px; border: solid #fff; border-width: 0 1.6px 1.6px 0;
+    transform: rotate(45deg);
+  }
   td.center { text-align: center; }
-  .status { font-size: 13px; white-space: nowrap; }
-  footer { color: var(--muted); font-size: 12px; margin-top: 20px; line-height: 1.6; }
-  a { color: var(--accent); }
+  .status { font-size: 12.5px; white-space: nowrap; color: var(--muted); }
+  .status .dot { margin-right: 8px; vertical-align: middle; }
+  .status .tx { vertical-align: middle; }
+
+  footer { color: var(--muted-2); font-size: 11.5px; margin-top: 28px; line-height: 1.7; }
+  footer b { color: var(--muted); font-weight: 500; }
+
+  @media (max-width: 760px) {
+    body { padding: 40px 20px 80px; }
+    h1 { font-size: 24px; }
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>Spun — Accelerator Tracker</h1>
-  <p class="sub">WhatsApp AI agent for local SMBs · ranked &amp; scored /100 · verified 2026-05-30</p>
-  <p class="legend">Timeline vs June 1, 2026 — 🟢 open/rolling · 🟡 imminent deadline · 🔴 closed/TBA · ⚪ referral-only. Tick the box once you've applied; progress saves in this browser.</p>
+  <header>
+    <h1>Spun — Accelerator Tracker</h1>
+    <p class="sub">WhatsApp AI agent for local SMBs · ranked &amp; scored out of 100 · verified May 30, 2026</p>
+    <div class="legend">
+      <span class="lg"><i class="dot open"></i> Open / rolling</span>
+      <span class="lg"><i class="dot soon"></i> Imminent deadline</span>
+      <span class="lg"><i class="dot closed"></i> Closed / TBA</span>
+      <span class="lg"><i class="dot ref"></i> Referral-only</span>
+      <span class="note">Timeline vs June 1, 2026. Tick the box once you've applied — progress saves in this browser.</span>
+    </div>
+  </header>
 
   <div class="bar">
     <div class="progress"><span id="pbar"></span></div>
@@ -90,13 +153,13 @@
           <th class="center">Done</th>
           <th>#</th>
           <th>Accelerator</th>
-          <th class="center">Score</th>
+          <th>Score</th>
           <th>Investment &amp; terms</th>
           <th>Equity</th>
-          <th>AI/SaaS fit</th>
+          <th>AI / SaaS fit</th>
           <th>Signal</th>
           <th>SMB distribution</th>
-          <th>Timeline (vs Jun 1)</th>
+          <th>Timeline</th>
         </tr>
       </thead>
       <tbody id="tbody"></tbody>
@@ -104,53 +167,46 @@
   </div>
 
   <footer>
-    Scoring weights: AI/SaaS fit 30 · Signal 25 · Investment &amp; terms 20 · SMB distribution 15 · Timeline 10.<br>
+    <b>Scoring weights:</b> AI/SaaS fit 30 · Signal 25 · Investment &amp; terms 20 · SMB distribution 15 · Timeline 10.<br>
     Verify exact dates before applying — program sites show only the current cohort. Built for Spun.
   </footer>
 </div>
 
 <script>
 const DATA = [
-  {r:1,  n:"Y Combinator",                     s:94, inv:"$125K/7% + $375K uncapped MFN SAFE = $500K", eq:"7%+",   ai:"Elite — ~70%+ AI batches", sig:"Highest, <1%",            dist:"Network only",                       t:"🔴 S26 closed; Fall TBA"},
-  {r:2,  n:"a16z Speedrun",                     s:90, inv:"Up to $1M ($500K/~10% + $500K follow) + $7M credits", eq:"~10%", ai:"Very high, AI-native", sig:"High, rising",            dist:"a16z portfolio",                     t:"🔴 SR007 closed; SR008 TBA"},
-  {r:3,  n:"Entrepreneur First (London)",       s:87, inv:"$125K/8% (+opt. $125K MFN) +£6K stipend", eq:"8%",    ai:"Strong, AI-skewed",        sig:"Top-tier UK",             dist:"Talent, not commercial",             t:"🟡 Fall deadline ~Jun 21"},
-  {r:4,  n:"Seedcamp (London)",                 s:85, inv:"Up to ~€475K (flexible)", eq:"7–10%", ai:"Strong EU B2B SaaS",       sig:"Very high (\"EU YC\")",   dist:"Investor network",                   t:"🟢 Rolling, ~2wk decisions"},
-  {r:5,  n:"Conviction Embed",                  s:84, inv:"Uncapped MFN SAFE (amt unverified) + $1.2M credits", eq:"MFN", ai:"Best brand fit — AI-only", sig:"Very high, <1%",          dist:"Advisor network",                    t:"🔴 C6 closed; C7 (~H2) TBA"},
-  {r:6,  n:"Techstars London",                  s:83, inv:"$20K/5% + $200K uncapped SAFE = $220K", eq:"5%+",  ai:"Strong generalist",        sig:"Top-tier, <0.5%",         dist:"10K+ mentor net",                    t:"🟡 Fall deadline ~Jun 10"},
-  {r:7,  n:"AI Grant (Friedman/Gross)",         s:83, inv:"$250K uncapped SAFE + $350K Azure + ~$250K compute", eq:"MFN", ai:"Maximal — AI-only",   sig:"Very high in AI",         dist:"Operator net",                       t:"🔴 Batch 4 closed; B5 TBA"},
-  {r:8,  n:"Wayra UK (Telefónica/O2)",          s:82, inv:"Up to ~£250K (€50K–5M range)", eq:"minority", ai:"Good, wants GenAI B2B",    sig:"Strategic corp VC",       dist:"★ Best telco/SMB reach (O2 business)", t:"🟢 Rolling — Outliers 2026 open"},
-  {r:9,  n:"South Park Commons",                s:81, inv:"$400K + $600K follow = $1M", eq:"7%",    ai:"Strong, AI-weighted",      sig:"High prestige",           dist:"Network only",                       t:"🟡 Fall apps open this summer"},
-  {r:10, n:"Neo (Residency)",                   s:80, inv:"$750K uncapped SAFE", eq:"val-linked", ai:"Good, AI lean",            sig:"High, ~12–15/cohort",     dist:"Low",                                t:"🟡 Deadline Jun 14"},
-  {r:11, n:"Antler (London/global)",            s:78, inv:"London £210K (£125K/8.5% + £85K note + £40K fee)", eq:"8.5%", ai:"Strong generalist",  sig:"High, <1%",               dist:"Global investor net",                t:"🟢 Rolling (team/idea-stage)"},
-  {r:12, n:"Founders Factory (London)",         s:74, inv:"~£30–250K cash + ~£220K in-kind", eq:"4–7%",  ai:"Strong, AI tracks",        sig:"High",                    dist:"★ Corporate partners (enterprise)",  t:"🟡 Track-dependent — confirm"},
-  {r:13, n:"500 Global (Batch 37)",             s:72, inv:"$150K (−$37.5K fee ≈ $112.5K net)", eq:"6%",    ai:"Generalist B2B",           sig:"Established, larger cohort", dist:"★ GTM/distribution curriculum",    t:"🟢 Rolling, open now"},
-  {r:14, n:"Plug and Play",                     s:70, inv:"Equity-free program; opt. $25–500K", eq:"0–5%",  ai:"Strong, Applied AI",       sig:"Large net, less selective", dist:"★ Corporate/commerce pilots",      t:"🟢 Rolling/continuous"},
-  {r:15, n:"Station F — F·ai (Paris)",          s:69, inv:"$1M+ compute (OpenAI/Anthropic/Google/Meta/Mistral)", eq:"0%", ai:"Very high, AI-only",  sig:"High prestige",           dist:"Deal Day buyers",                    t:"⚪ Fall (~Sep 6) referral-only"},
-  {r:16, n:"NatWest Accelerator",               s:66, inv:"Free; Pitch £100K prize pot", eq:"0%",    ai:"Sector-agnostic",          sig:"UK SMB credibility",      dist:"★★ Massive UK SMB banking reach",    t:"🟢 Community rolling (Pitch closed)"},
-  {r:17, n:"Founder Institute",                 s:62, inv:"No cash; ~$799–999 fee", eq:"2.5% warrant", ai:"Good, B2B SaaS in scope", sig:"Moderate (volume)",       dist:"Mentor net",                         t:"🟡 Fall cohorts open (SV early Jul 26)"},
-  {r:18, n:"The Residency",                     s:58, inv:"Co-living house, ~$3K/trimester stipend", eq:"2% (0% Vienna)", ai:"Good, AI-friendly", sig:"Trendy, ~3%",             dist:"Investor access",                    t:"🟢 Effectively rolling (Ch. 8)"},
-  {r:19, n:"Barclays Eagle Labs",               s:57, inv:"Free", eq:"0%",    ai:"Sector-agnostic",          sig:"UK ecosystem",            dist:"UK SMB banking adjacency",           t:"🟡 Female Founder track May 1–Jun 12"},
-  {r:20, n:"Microsoft for Startups Founders Hub", s:56, inv:"Up to $150K Azure + $2.5K OpenAI", eq:"0%", ai:"High (Azure OpenAI)",      sig:"Low signal, high value",  dist:"None",                               t:"🟢 Always-open, bootstrap-friendly"},
-  {r:21, n:"Google for Startups — AI tier",     s:55, inv:"Up to $350K GCP credits (Gemini)", eq:"0%",    ai:"High (req. Gemini)",       sig:"Low signal, high value",  dist:"None",                               t:"🟢 Rolling (needs Seed–A funding)"},
-  {r:22, n:"Tech Nation — Upscale",             s:52, inv:"Equity-free growth program", eq:"0%",    ai:"Good digital/SaaS",        sig:"Strong UK brand",         dist:"Network",                            t:"🟡 Opens Jun 5 (Series A only)"},
-  {r:23, n:"AWS GenAI Accelerator (GAIA)",      s:51, inv:"Up to $1M AWS credits", eq:"0%",    ai:"High",                     sig:"★ Genuine prestige (<2%)", dist:"re:Invent showcase",                t:"🔴 Closed; 2026 dates TBA"},
-  {r:24, n:"NVIDIA Inception",                  s:48, inv:"Brokered credits (AWS $100K / GCP $350K / DGX)", eq:"0%", ai:"High (GPU-centric)",   sig:"Low (22K+ members)",      dist:"VC intros",                          t:"🟢 Always-open"},
-  {r:25, n:"SETsquared",                        s:44, inv:"No equity, no cash", eq:"0%",    ai:"Deep-tech bias, SaaS ok",  sig:"Regional",                dist:"Investor net",                       t:"🟢 Rolling"},
-  {r:26, n:"Bethnal Green Ventures",            s:40, inv:"£60K/7% + up to £1M follow", eq:"7%",    ai:"⚠️ Tech-for-good ONLY — needs reframe", sig:"Competitive niche",   dist:"Impact net",                         t:"🟡 Autumn deadline Jun 21"},
-  {r:27, n:"Boost VC",                          s:34, inv:"$500K (range $100K–1M), SAFE ~$3–7M cap", eq:"~7–15%", ai:"⚠️ Poor — deep-tech moonshots", sig:"Strong in deep tech, ~4%", dist:"None",                          t:"🟢 Rolling (thesis mismatch)"},
-  {r:28, n:"Conception X",                      s:30, inv:"Free; up to £250K via syndicate", eq:"0%",    ai:"⚠️ PhD/researcher-only",   sig:"Niche deep-tech",         dist:"XTX Ventures",                       t:"🔴 Closed; next late 2026"},
-  {r:29, n:"SOSV (HAX/IndieBio)",               s:22, inv:"HAX up to ~$550K; IndieBio ~$525K", eq:"~8–10%", ai:"⚠️ Poor — hardtech/biotech", sig:"Strong in deep tech",   dist:"Lab facilities",                     t:"🟢 Rolling (thesis mismatch)"},
+  {r:1,  n:"Y Combinator",                     s:94, inv:"$125K/7% + $375K uncapped MFN SAFE = $500K", eq:"7%+",   ai:"Elite — ~70%+ AI batches", sig:"Highest, <1%",            dist:"Network only",                       t:"S26 closed; Fall TBA", ts:"closed"},
+  {r:2,  n:"a16z Speedrun",                     s:90, inv:"Up to $1M ($500K/~10% + $500K follow) + $7M credits", eq:"~10%", ai:"Very high, AI-native", sig:"High, rising",            dist:"a16z portfolio",                     t:"SR007 closed; SR008 TBA", ts:"closed"},
+  {r:3,  n:"Entrepreneur First (London)",       s:87, inv:"$125K/8% (+opt. $125K MFN) +£6K stipend", eq:"8%",    ai:"Strong, AI-skewed",        sig:"Top-tier UK",             dist:"Talent, not commercial",             t:"Fall deadline ~Jun 21", ts:"soon"},
+  {r:4,  n:"Seedcamp (London)",                 s:85, inv:"Up to ~€475K (flexible)", eq:"7–10%", ai:"Strong EU B2B SaaS",       sig:"Very high (\"EU YC\")",   dist:"Investor network",                   t:"Rolling, ~2wk decisions", ts:"open"},
+  {r:5,  n:"Conviction Embed",                  s:84, inv:"Uncapped MFN SAFE (amt unverified) + $1.2M credits", eq:"MFN", ai:"Best brand fit — AI-only", sig:"Very high, <1%",          dist:"Advisor network",                    t:"C6 closed; C7 (~H2) TBA", ts:"closed"},
+  {r:6,  n:"Techstars London",                  s:83, inv:"$20K/5% + $200K uncapped SAFE = $220K", eq:"5%+",  ai:"Strong generalist",        sig:"Top-tier, <0.5%",         dist:"10K+ mentor net",                    t:"Fall deadline ~Jun 10", ts:"soon"},
+  {r:7,  n:"AI Grant (Friedman/Gross)",         s:83, inv:"$250K uncapped SAFE + $350K Azure + ~$250K compute", eq:"MFN", ai:"Maximal — AI-only",   sig:"Very high in AI",         dist:"Operator net",                       t:"Batch 4 closed; B5 TBA", ts:"closed"},
+  {r:8,  n:"Wayra UK (Telefónica/O2)",          s:82, inv:"Up to ~£250K (€50K–5M range)", eq:"minority", ai:"Good, wants GenAI B2B",    sig:"Strategic corp VC",       dist:"Best telco/SMB reach (O2 business)", t:"Rolling — Outliers 2026 open", ts:"open"},
+  {r:9,  n:"South Park Commons",                s:81, inv:"$400K + $600K follow = $1M", eq:"7%",    ai:"Strong, AI-weighted",      sig:"High prestige",           dist:"Network only",                       t:"Fall apps open this summer", ts:"soon"},
+  {r:10, n:"Neo (Residency)",                   s:80, inv:"$750K uncapped SAFE", eq:"val-linked", ai:"Good, AI lean",            sig:"High, ~12–15/cohort",     dist:"Low",                                t:"Deadline Jun 14", ts:"soon"},
+  {r:11, n:"Antler (London/global)",            s:78, inv:"London £210K (£125K/8.5% + £85K note + £40K fee)", eq:"8.5%", ai:"Strong generalist",  sig:"High, <1%",               dist:"Global investor net",                t:"Rolling (team/idea-stage)", ts:"open"},
+  {r:12, n:"Founders Factory (London)",         s:74, inv:"~£30–250K cash + ~£220K in-kind", eq:"4–7%",  ai:"Strong, AI tracks",        sig:"High",                    dist:"Corporate partners (enterprise)",    t:"Track-dependent — confirm", ts:"soon"},
+  {r:13, n:"500 Global (Batch 37)",             s:72, inv:"$150K (−$37.5K fee ≈ $112.5K net)", eq:"6%",    ai:"Generalist B2B",           sig:"Established, larger cohort", dist:"GTM/distribution curriculum",      t:"Rolling, open now", ts:"open"},
+  {r:14, n:"Plug and Play",                     s:70, inv:"Equity-free program; opt. $25–500K", eq:"0–5%",  ai:"Strong, Applied AI",       sig:"Large net, less selective", dist:"Corporate/commerce pilots",        t:"Rolling / continuous", ts:"open"},
+  {r:15, n:"Station F — F·ai (Paris)",          s:69, inv:"$1M+ compute (OpenAI/Anthropic/Google/Meta/Mistral)", eq:"0%", ai:"Very high, AI-only",  sig:"High prestige",           dist:"Deal Day buyers",                    t:"Fall (~Sep 6) referral-only", ts:"ref"},
+  {r:16, n:"NatWest Accelerator",               s:66, inv:"Free; Pitch £100K prize pot", eq:"0%",    ai:"Sector-agnostic",          sig:"UK SMB credibility",      dist:"Massive UK SMB banking reach",       t:"Community rolling (Pitch closed)", ts:"open"},
+  {r:17, n:"Founder Institute",                 s:62, inv:"No cash; ~$799–999 fee", eq:"2.5% warrant", ai:"Good, B2B SaaS in scope", sig:"Moderate (volume)",       dist:"Mentor net",                         t:"Fall cohorts open (SV early Jul 26)", ts:"soon"},
+  {r:18, n:"The Residency",                     s:58, inv:"Co-living house, ~$3K/trimester stipend", eq:"2% (0% Vienna)", ai:"Good, AI-friendly", sig:"Trendy, ~3%",             dist:"Investor access",                    t:"Effectively rolling (Ch. 8)", ts:"open"},
+  {r:19, n:"Barclays Eagle Labs",               s:57, inv:"Free", eq:"0%",    ai:"Sector-agnostic",          sig:"UK ecosystem",            dist:"UK SMB banking adjacency",           t:"Female Founder track May 1–Jun 12", ts:"soon"},
+  {r:20, n:"Microsoft for Startups Founders Hub", s:56, inv:"Up to $150K Azure + $2.5K OpenAI", eq:"0%", ai:"High (Azure OpenAI)",      sig:"Low signal, high value",  dist:"None",                               t:"Always-open, bootstrap-friendly", ts:"open"},
+  {r:21, n:"Google for Startups — AI tier",     s:55, inv:"Up to $350K GCP credits (Gemini)", eq:"0%",    ai:"High (req. Gemini)",       sig:"Low signal, high value",  dist:"None",                               t:"Rolling (needs Seed–A funding)", ts:"open"},
+  {r:22, n:"Tech Nation — Upscale",             s:52, inv:"Equity-free growth program", eq:"0%",    ai:"Good digital/SaaS",        sig:"Strong UK brand",         dist:"Network",                            t:"Opens Jun 5 (Series A only)", ts:"soon"},
+  {r:23, n:"AWS GenAI Accelerator (GAIA)",      s:51, inv:"Up to $1M AWS credits", eq:"0%",    ai:"High",                     sig:"Genuine prestige (<2%)", dist:"re:Invent showcase",                t:"Closed; 2026 dates TBA", ts:"closed"},
+  {r:24, n:"NVIDIA Inception",                  s:48, inv:"Brokered credits (AWS $100K / GCP $350K / DGX)", eq:"0%", ai:"High (GPU-centric)",   sig:"Low (22K+ members)",      dist:"VC intros",                          t:"Always-open", ts:"open"},
+  {r:25, n:"SETsquared",                        s:44, inv:"No equity, no cash", eq:"0%",    ai:"Deep-tech bias, SaaS ok",  sig:"Regional",                dist:"Investor net",                       t:"Rolling", ts:"open"},
+  {r:26, n:"Bethnal Green Ventures",            s:40, inv:"£60K/7% + up to £1M follow", eq:"7%",    ai:"Tech-for-good only — needs reframe", sig:"Competitive niche",   dist:"Impact net",                         t:"Autumn deadline Jun 21", ts:"soon", warn:1},
+  {r:27, n:"Boost VC",                          s:34, inv:"$500K (range $100K–1M), SAFE ~$3–7M cap", eq:"~7–15%", ai:"Poor — deep-tech moonshots", sig:"Strong in deep tech, ~4%", dist:"None",                          t:"Rolling (thesis mismatch)", ts:"open", warn:1},
+  {r:28, n:"Conception X",                      s:30, inv:"Free; up to £250K via syndicate", eq:"0%",    ai:"PhD / researcher-only",   sig:"Niche deep-tech",         dist:"XTX Ventures",                       t:"Closed; next late 2026", ts:"closed", warn:1},
+  {r:29, n:"SOSV (HAX/IndieBio)",               s:22, inv:"HAX up to ~$550K; IndieBio ~$525K", eq:"~8–10%", ai:"Poor — hardtech/biotech", sig:"Strong in deep tech",   dist:"Lab facilities",                     t:"Rolling (thesis mismatch)", ts:"open", warn:1},
 ];
 
 const KEY = "spun-accel-applied-v1";
 const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
-
-function scoreColor(s) {
-  if (s >= 80) return {bg:"#16341f", fg:"#6ee7b7"};
-  if (s >= 65) return {bg:"#33310f", fg:"#e7d36e"};
-  if (s >= 50) return {bg:"#2a2433", fg:"#c9a9ff"};
-  return {bg:"#331a16", fg:"#ff9a8a"};
-}
 
 const tbody = document.getElementById("tbody");
 DATA.forEach(d => {
@@ -158,18 +214,18 @@ DATA.forEach(d => {
   const id = "a" + d.r;
   const isDone = !!saved[id];
   if (isDone) tr.classList.add("done");
-  const sc = scoreColor(d.s);
+  const warnCls = d.warn ? " warn" : "";
   tr.innerHTML = `
     <td class="center"><input type="checkbox" class="chk" data-id="${id}" ${isDone ? "checked" : ""}></td>
     <td class="rank">${d.r}</td>
-    <td class="name">${d.n}</td>
-    <td class="center"><span class="score" style="background:${sc.bg};color:${sc.fg}">${d.s}</span></td>
+    <td class="name"><span class="nm">${d.n}</span></td>
+    <td><span class="score">${d.s}<i class="track"><i style="width:${d.s}%"></i></i></span></td>
     <td class="small">${d.inv}</td>
     <td class="small">${d.eq}</td>
-    <td class="small">${d.ai}</td>
+    <td class="small${warnCls}">${d.ai}</td>
     <td class="small">${d.sig}</td>
     <td class="small">${d.dist}</td>
-    <td class="status">${d.t}</td>`;
+    <td class="status"><i class="dot ${d.ts}"></i><span class="tx">${d.t}</span></td>`;
   tbody.appendChild(tr);
 });
 
