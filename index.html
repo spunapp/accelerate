@@ -263,7 +263,7 @@ const DATA = [
 ];
 
 // status states: 0 blank · 1 applied · 2 accepted · 3 rejected
-const KEY = "spun-accel-status-v2";
+const KEY = "spun-accel-status-v3";
 const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
 
 // Lucide-style inline icons (greyscale, inherit currentColor)
@@ -275,10 +275,13 @@ const ICONS = {
 const LABELS = {0:"Not applied", 1:"Applied", 2:"Accepted", 3:"Rejected"};
 const EXT = '<svg class="ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg>';
 
+// Stable per-program key (survives reordering/insertions); rank is NOT used as identity.
+const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+
 const tbody = document.getElementById("tbody");
 DATA.forEach(d => {
   const tr = document.createElement("tr");
-  const id = "a" + d.r;
+  const id = slug(d.n);
   const st = saved[id] || 0;
   if (st) tr.classList.add("st" + st);
   const warnCls = d.warn ? " warn" : "";
